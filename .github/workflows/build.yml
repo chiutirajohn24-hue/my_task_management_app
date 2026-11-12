@@ -18,6 +18,22 @@ jobs:
           java-version: 21
       - run: npm ci
       - run: npx cap sync android
+      - name: Create alert sound and permissions
+        run: |
+          python3 - <<'PY'
+          import wave,struct,math,os
+          os.makedirs('android/app/src/main/res/raw',exist_ok=True)
+          sr=22050;N=[(659,0),(880,.16),(1175,.32),(880,.5),(1319,.68)]
+          total=int(sr*1.8);b=[0.0]*total
+          for f,t in N:
+              s=int(t*sr)
+              for i in range(int(sr*.9)):
+                  if s+i<total: b[s+i]+=math.sin(2*math.pi*f*i/sr)*math.exp(-4*i/sr)*.45
+          w=wave.open('android/app/src/main/res/raw/irri_alert.wav','wb')
+          w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)
+          w.writeframes(b''.join(struct.pack('<h',int(max(-1,min(1,x))*32767)) for x in b));w.close()
+          PY
+          sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>\n    <application#' android/app/src/main/AndroidManifest.xml
       - run: chmod +x android/gradlew
       - run: cd android && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
