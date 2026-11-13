@@ -1,4 +1,5 @@
-window.FIREBASE_CONFIG = { 
+// Paste the values from Firebase: Project settings > General > Your apps > Web app > firebaseConfig
+window.FIREBASE_CONFIG = {
     apiKey: "AIzaSyBVhLuqikWoMN9hy84U-H-f8TuA3hM10mo",
     authDomain: "synthesis-task-management-app.firebaseapp.com",
     projectId: "synthesis-task-management-app",
