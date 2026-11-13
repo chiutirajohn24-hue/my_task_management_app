@@ -17,7 +17,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
-      - run: cp node_modules/jspdf/dist/jspdf.umd.min.js node_modules/firebase/firebase-app-compat.js node_modules/firebase/firebase-auth-compat.js node_modules/firebase/firebase-firestore-compat.js www/df.umd.min.js
+      - run: cp node_modules/jspdf/dist/jspdf.umd.min.js node_modules/firebase/firebase-app-compat.js node_modules/firebase/firebase-auth-compat.js node_modules/firebase/firebase-firestore-compat.js www/
       - run: npx cap sync android
       - name: Sound, permissions, icon and app name
         run: |
