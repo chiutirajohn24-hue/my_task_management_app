@@ -17,8 +17,9 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
+      - run: cp node_modules/jspdf/dist/jspdf.umd.min.js www/jspdf.umd.min.js
       - run: npx cap sync android
-      - name: Create alert sound and permissions
+      - name: Sound, permissions, icon and app name
         run: |
           python3 - <<'PY'
           import wave,struct,math,os
@@ -33,7 +34,39 @@ jobs:
           w.setnchannels(1);w.setsampwidth(2);w.setframerate(sr)
           w.writeframes(b''.join(struct.pack('<h',int(max(-1,min(1,x))*32767)) for x in b));w.close()
           PY
+          R=android/app/src/main/res
           sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>\n    <application#' android/app/src/main/AndroidManifest.xml
+          sed -i -E 's#(<string name="(app_name|title_activity_main)">)[^<]*#\1Synthesis Tasks#' $R/values/strings.xml
+          mkdir -p $R/drawable $R/mipmap-anydpi-v26 $R/values
+          cat > $R/values/synth_colors.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources><color name="synth_icon_bg">#FF7D20</color></resources>
+          EOF
+          cat > $R/drawable/ic_launcher_fg.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+            <group android:translateX="18" android:translateY="18" android:scaleX="3" android:scaleY="3">
+              <path android:pathData="M12,3 C12,3 18,9.5 18,14 A6,6 0 0 1 6,14 C6,9.5 12,3 12,3 Z" android:strokeColor="#FFFFFF" android:strokeWidth="1.6" android:strokeLineCap="round" android:strokeLineJoin="round"/>
+              <path android:pathData="M9,14 L11.2,16.2 L15,11.8" android:strokeColor="#FFFFFF" android:strokeWidth="1.6" android:strokeLineCap="round" android:strokeLineJoin="round"/>
+            </group>
+          </vector>
+          EOF
+          cat > $R/drawable/ic_stat_synth.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+            <path android:pathData="M12,3 C12,3 18,9.5 18,14 A6,6 0 0 1 6,14 C6,9.5 12,3 12,3 Z" android:strokeColor="#FFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round"/>
+            <path android:pathData="M9,14 L11.2,16.2 L15,11.8" android:strokeColor="#FFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round"/>
+          </vector>
+          EOF
+          for n in ic_launcher ic_launcher_round; do
+          cat > $R/mipmap-anydpi-v26/$n.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@color/synth_icon_bg"/>
+            <foreground android:drawable="@drawable/ic_launcher_fg"/>
+          </adaptive-icon>
+          EOF
+          done
       - run: chmod +x android/gradlew
       - run: cd android && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
