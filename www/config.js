@@ -1,8 +1,9 @@
 window.FIREBASE_CONFIG = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_AUTH_DOMAIN",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_STORAGE_BUCKET",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyBVhLuqikWoMN9hy84U-H-f8TuA3hM10mo",
+  authDomain: "synthesis-task-management-app.firebaseapp.com",
+  projectId: "synthesis-task-management-app",
+  storageBucket: "synthesis-task-management-app.firebasestorage.app",
+  messagingSenderId: "395035701094",
+  appId: "1:395035701094:web:96c2ba22701f49eb74a2a7",
+  measurementId: "G-0BFP4R97YM"
 };
